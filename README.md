@@ -1,2 +1,6 @@
 # story-scrape
-[Reminder to change description upon completion]
+##### Created by Matt Petrower
+
+[Text goes here]
+
+[Github repository](https://github.com/msp9612/story-scrape)

@@ -1,0 +1,31 @@
+{
+    "workbench.startupEditor": "newUntitledFile",
+    "workbench.colorTheme": "Bluloco Light",
+    "git.enableSmartCommit": true,
+    "git.autofetch": true,
+    "terminal.integrated.shell.windows": "C:\\Program Files\\Git\\bin\\bash.exe",
+    "editor.renderWhitespace": "none",
+    "editor.renderControlCharacters": false,
+    "[javascript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "extensions.ignoreRecommendations": false,
+    "terminal.integrated.cursorBlinking": true,
+    "terminal.integrated.rightClickBehavior": "default",
+    "terminal.integrated.cursorStyle": "line",
+    "files.autoSave": "off",
+    "eslint.alwaysShowStatus": true,
+    "window.newWindowDimensions": "maximized",
+    "files.exclude": {
+        ".history": true
+    },
+    "[html]": {
+        "editor.defaultFormatter": "vscode.html-language-features"
+    },
+    "[css]": {
+        "editor.defaultFormatter": "aeschli.vscode-css-formatter"
+    },
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    }
+}
