@@ -17,7 +17,7 @@ module.exports = {
   'rules': {
     'no-multiple-empty-lines': 'off',
     'require-jsdoc': 'off',
-    'max-len': ["error", { "code": 140 }]
+    'max-len': 'off',
     // 'linebreak-style': 0,
     // 'global-require': 0,
     // 'eslint linebreak-style': [0, 'error', 'windows'],
