@@ -21,8 +21,44 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(express.static('public'));
 
-mongoose.connect('mongodb://localhost/polygondb', {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true});
+mongoose.connect('mongodb://localhost/polygondb', {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false});
 
 app.listen(PORT, function() {
   console.log('App running on http://localhost:%s', PORT);
+});
+
+// Find data in database
+app.get('/api/articles', async function(req, res) {
+  try {
+    const data = await db.Article.find({});
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({error: {name: err.name, message: err.message}});
+  }
+});
+
+// Scrape articles
+app.get('/api/scrape', async function(req, res) {
+  const response = await axios.get('https://www.polygon.com/');
+  const $ = cheerio.load(response.data);
+  let newArticleCount = 0;
+  $('.c-showcase-eight-up__entry').each(function(i, element) {
+    const articleData = {};
+    articleData.label = $(this).find('ul').find('li').find('a').find('span').text();
+    articleData.title = $(this).find('h2').find('a').text();
+    articleData.byline = $(this).find('div').find('.c-byline-wrapper').find('span').find('a').find('span').text();
+    articleData.url = $(this).find('h2').find('a').attr('href');
+    db.Article.findOneAndUpdate({'url': articleData.url}, articleData, {upsert: true}, function(err) {
+      if (err) return console.log(err);
+      newArticleCount++;
+    });
+  });
+  res.send(newArticleCount + ' new articles added');
+});
+
+// Clear all articles
+app.delete('/api/clear', async function(req, res) {
+  db.Article.deleteMany({}, function(err) {
+    if (err) return console.log(err);
+  });
 });
