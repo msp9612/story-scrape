@@ -8,13 +8,16 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const ArticleSchema = new Schema({
-  headline: {
+  label: {
     type: String,
     required: true,
   },
-  summary: {
+  title: {
     type: String,
     required: true,
+  },
+  byline: {
+    type: String,
   },
   url: {
     type: String,
