@@ -41,24 +41,23 @@ app.get('/api/articles', async function(req, res) {
 app.get('/api/scrape', async function(req, res) {
   const response = await axios.get('https://www.polygon.com/');
   const $ = cheerio.load(response.data);
-  let newArticleCount = 0;
-  $('.c-showcase-eight-up__entry').each(function(i, element) {
+  $('.c-showcase-eight-up__entry').each(async function(i, element) {
     const articleData = {};
     articleData.label = $(this).find('ul').find('li').find('a').find('span').text();
     articleData.title = $(this).find('h2').find('a').text();
     articleData.byline = $(this).find('div').find('.c-byline-wrapper').find('span').find('a').find('span').text();
     articleData.url = $(this).find('h2').find('a').attr('href');
-    db.Article.findOneAndUpdate({'url': articleData.url}, articleData, {upsert: true}, function(err) {
+    await db.Article.findOneAndUpdate({'url': articleData.url}, articleData, {upsert: true}, function(err) {
       if (err) return console.log(err);
-      newArticleCount++;
     });
   });
-  res.send(newArticleCount + ' new articles added');
+  res.send('Scrape successful!');
 });
 
 // Clear all articles
 app.delete('/api/clear', async function(req, res) {
-  db.Article.deleteMany({}, function(err) {
+  await db.Article.deleteMany({}, function(err) {
     if (err) return console.log(err);
   });
+  res.send('Successfully cleared articles.');
 });
