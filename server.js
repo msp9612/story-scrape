@@ -61,3 +61,12 @@ app.delete('/api/clear', async function(req, res) {
   });
   res.send('Successfully cleared articles.');
 });
+
+
+// Delete one article
+app.delete('/api/delete/:id', async function(req, res) {
+  await db.Article.deleteOne({'_id': req.params.id}, function(err) {
+    if (err) return console.log(err);
+  });
+  res.send('Article deleted.');
+});

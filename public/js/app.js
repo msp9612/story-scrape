@@ -16,7 +16,7 @@ $(document).ready(function() {
   $('.scrape-new-articles').on('click', handleScrapeNew);
   $('.clear-all-articles').on('click', handleClearAll);
   //   $(document).on('click', 'COMMENTS-BUTTONS', someFunction);
-  //   $(document).on('click', 'DELTE-BUTTONS', someFunction);
+  $(document).on('click', '.delete-article', handleDeleteArticle);
   //   <div class="bootbox-body">
   //   <div class="container-fluid text-center">
   //       <h4>Notes For Article: 5e0d1a3c2c553e001536b4d4</h4>
@@ -58,8 +58,8 @@ function createCard(article) {
       $('<a class="btn btn-info comments">Comments</a>'),
       $('<a class="btn btn-danger delete-article">Delete Article</a>'),
   );
+  card.data('_id', article._id);
   card.append(cardHeader, cardBody);
-  // card.data('_id', article._id);
   return card;
 };
 
@@ -82,6 +82,26 @@ function handleClearAll() {
       },
       error: function() {
         alert('Articles could not be cleared.');
+      },
+    });
+  }
+}
+
+// Delete one article
+function handleDeleteArticle() {
+  if (confirm('Delete this article?')) {
+    const articleCard = $(this).parents('.card');
+    const articleCardID = articleCard.data()._id;
+    $.ajax({
+      type: 'DELETE',
+      url: '/api/delete/' + articleCardID,
+      data: {id: articleCardID},
+      success: function() {
+        articleCard.remove();
+        alert('Article deleted.');
+      },
+      error: function() {
+        alert('Article could not be deleted');
       },
     });
   }
