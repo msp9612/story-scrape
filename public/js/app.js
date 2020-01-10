@@ -10,28 +10,26 @@ let articleContainer;
 
 /* MAIN */
 
+/**
+ * When adding new articles, the entire list of articles is refreshed.
+ * When deleting one article (not all), that article is simply removed.
+ *
+ * The comments in the comment box mirror this behavior.
+ */
+
 // Start the fun once the DOM is ready
 $(document).ready(function() {
   articleContainer = $('.article-container');
   $('.scrape-new-articles').on('click', handleScrapeNew);
   $('.clear-all-articles').on('click', handleClearAll);
-  //   $(document).on('click', 'COMMENTS-BUTTONS', someFunction);
+  $(document).on('click', '.comments', handleCommentsBox);
+  // $(document).on('click', '.COMMENT_SAVE', handleCOMMENT_SAVE);
+  // $(document).on('click', '.COMMENT_DELETE', handleCOMMENT_DELETE);
   $(document).on('click', '.delete-article', handleDeleteArticle);
-  //   <div class="bootbox-body">
-  //   <div class="container-fluid text-center">
-  //       <h4>Notes For Article: 5e0d1a3c2c553e001536b4d4</h4>
-  //       <hr>
-  //       <ul class="list-group note-container">
-  //           <li class="list-group-item note">Here's a note<button
-  //                   class="btn btn-danger note-delete">x</button></li>
-  //       </ul><textarea placeholder="New Note" rows="4" cols="60"></textarea><button
-  //           class="btn btn-success save">Save Note</button>
-  //   </div>
-  // </div>
   loadSavedArticles();
 });
 
-// Find data in database, then display
+// Find articles in database, then display
 function loadSavedArticles() {
   $.get('/api/articles').then(function(data) {
     articleContainer.empty();
@@ -87,6 +85,46 @@ function handleClearAll() {
   }
 }
 
+// Display comment box
+function handleCommentsBox() {
+  articleCardID = $(this).parents('.card').data()._id;
+  const commentBox = $('<div class=\'container-fluid text-center comment-box\'>').append(
+      $('<h4>').text('Article Comments'),
+      $('<hr>'),
+      $('<ul class=\'list-group comment-list\'>'),
+      $('<textarea placeholder=\'New Comment\' rows=\'4\' cols=\'60\'>'),
+      $('<button class=\'btn btn-success comment-save\'>Save Note</button>'),
+  );
+  bootbox.dialog({
+    message: commentBox,
+    closeButton: true,
+  });
+  $('.comment-save').data('articleID', articleCardID);
+  loadArticleComments(articleCardID);
+}
+
+// Find comments for an article, then display
+function loadArticleComments(articleID) {
+  $('.comment-list').empty();
+  let articleComments = [];
+  $.get('/api/comments/' + articleID).then(function(data) {
+    articleComments = data;
+  });
+  for (let i = 0; i < articleComments.length; i++) {
+    currentComment = $('<li class=\'list-group-item comment\'>')
+        .text(articleComments[i].body)
+        .append($('<button class=\'btn btn-danger comment-delete\'>x</button>'));
+    currentComment.children('button').data('_id', articleComments[i]._id);
+    $('.comment-list').append(currentComment);
+  }
+}
+
+// Save comment
+// x
+
+// Delete comment
+// x
+
 // Delete one article
 function handleDeleteArticle() {
   if (confirm('Delete this article?')) {
@@ -95,7 +133,6 @@ function handleDeleteArticle() {
     $.ajax({
       type: 'DELETE',
       url: '/api/delete/' + articleCardID,
-      data: {id: articleCardID},
       success: function() {
         articleCard.remove();
         alert('Article deleted.');

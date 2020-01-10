@@ -27,7 +27,7 @@ app.listen(PORT, function() {
   console.log('App running on http://localhost:%s', PORT);
 });
 
-// Find data in database
+// Find articles in database
 app.get('/api/articles', async function(req, res) {
   try {
     const data = await db.Article.find({});
@@ -62,6 +62,15 @@ app.delete('/api/clear', async function(req, res) {
   res.send('Successfully cleared articles.');
 });
 
+// Find comments for an article
+app.get('/api/comments/:id', async function(req, res) {
+  try {
+    const data = await db.Article.findOne({'_id': req.params.id});
+    res.json(data.comments);
+  } catch (err) {
+    res.status(500).json({error: {name: err.name, message: err.message}});
+  }
+});
 
 // Delete one article
 app.delete('/api/delete/:id', async function(req, res) {
